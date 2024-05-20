@@ -1,0 +1,142 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Main {
+    private static Scanner scanner = new Scanner(System.in);
+    private static Map<String, String> userCredentials = new HashMap<>();
+    private static Map<String, Reservation> reservations = new HashMap<>();
+
+    public static void main(String[] args) {
+        userCredentials.put("alcy", "Alcy123@"); // Default user credentials
+
+        System.out.println("Welcome to the Online Reservation System");
+
+        int choice;
+        do {
+            System.out.println("\nMenu:");
+            System.out.println("1. Login");
+            System.out.println("2. Reservation Form");
+            System.out.println("3. Cancellation Form");
+            System.out.println("4. Show Reservations");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    login();
+                    break;
+                case 2:
+                    reservationForm();
+                    break;
+                case 3:
+                    cancellationForm();
+                    break;
+                case 4:
+                    showReservations();
+                    break;
+                case 5:
+                    System.out.println("Exiting the system. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 5);
+    }
+
+    private static void login() {
+        System.out.print("Enter username: ");
+        String username = scanner.next();
+        System.out.print("Enter password: ");
+        String password = scanner.next();
+
+        if (userCredentials.containsKey(username) && userCredentials.get(username).equals(password)) {
+            System.out.println("Login successful. Welcome, " + username + "!");
+        } else {
+            System.out.println("Invalid username or password. Login failed.");
+        }
+    }
+
+    private static void reservationForm() {
+        System.out.println("Reservation Form");
+        System.out.print("Enter your name: ");
+        String name = scanner.next();
+        System.out.print("Enter train number: ");
+        String trainNumber = scanner.next();
+        System.out.print("Enter class type: ");
+        String classType = scanner.next();
+        System.out.print("Enter date of journey: ");
+        String dateOfJourney = scanner.next();
+        System.out.print("Enter source: ");
+        String source = scanner.next();
+        System.out.print("Enter destination: ");
+        String destination = scanner.next();
+
+        // Generate a unique reservation ID
+        String reservationId = "R" + (reservations.size() + 1);
+
+        // Create a new reservation object and add it to the reservations map
+        Reservation reservation = new Reservation(name, trainNumber, classType, dateOfJourney, source, destination);
+        reservations.put(reservationId, reservation);
+
+        System.out.println("Reservation successful. Your reservation ID is: " + reservationId);
+    }
+
+    private static void cancellationForm() {
+        System.out.println("Cancellation Form");
+        System.out.print("Enter your reservation ID: ");
+        String reservationId = scanner.next();
+
+        // Check if the reservation ID exists
+        if (reservations.containsKey(reservationId)) {
+            Reservation reservation = reservations.get(reservationId);
+            System.out.println("Reservation details:");
+            System.out.println(reservation);
+            System.out.print("Confirm cancellation (yes/no): ");
+            String confirmation = scanner.next().toLowerCase();
+            if (confirmation.equals("yes")) {
+                reservations.remove(reservationId);
+                System.out.println("Reservation cancelled successfully.");
+            } else {
+                System.out.println("Cancellation cancelled. Returning to main menu.");
+            }
+        } else {
+            System.out.println("Reservation not found!");
+        }
+    }
+private static void showReservations() {
+        System.out.println("Reservations:");
+        if (reservations.isEmpty()) {
+            System.out.println("No reservations found.");
+        } else {
+            for (Map.Entry<String, Reservation> entry : reservations.entrySet()) {
+                System.out.println("Reservation ID: " + entry.getKey());
+                System.out.println(entry.getValue());
+            }
+        }
+    }
+    static class Reservation {
+        private String name;
+        private String trainNumber;
+        private String classType;
+        private String dateOfJourney;
+        private String source;
+        private String destination;
+
+        public Reservation(String name, String trainNumber, String classType, String dateOfJourney, String source, String destination) {
+            this.name = name;
+            this.trainNumber = trainNumber;
+            this.classType = classType;
+            this.dateOfJourney = dateOfJourney;
+            this.source = source;
+            this.destination = destination;
+        }
+
+        @Override
+        public String toString() {
+            return "Name: " + name + ", Train Number: " + trainNumber + ", Class Type: " + classType
+                    + ", Date of Journey: " + dateOfJourney + ", Source: " + source + ", Destination: " + destination;
+        }
+    }
+}
